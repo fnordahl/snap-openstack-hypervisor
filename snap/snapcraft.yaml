@@ -72,7 +72,7 @@ apps:
   openstack-hypervisor:
     environment:
       # Ensure site packages are loaded first
-      PYTHONPATH: $SNAP/usr/lib/python3.10:$SNAP/usr/lib/python3.10/site-packages:$SNAP/lib/python3.10:$SNAP/lib/python3.10/site-packages:$SNAP/usr/lib/python3/dist-packages::$PYTHONPATH
+      PYTHONPATH: $SNAP/usr/lib/python3.10:$SNAP/usr/lib/python3.10/site-packages:$SNAP/lib/python3.10:$SNAP/lib/python3.10/site-packages:$SNAP/usr/lib/python3/dist-packages:$PYTHONPATH
     command: bin/hypervisor
     plugs:
       - network

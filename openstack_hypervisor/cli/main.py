@@ -14,6 +14,7 @@
 
 import click
 
+from openstack_hypervisor.cli.hypervisor import hypervisor
 from openstack_hypervisor.cli.interfaces import list_nics
 from openstack_hypervisor.cli.log import setup_root_logging
 
@@ -30,6 +31,7 @@ def main():
     """Register commands and run the CLI."""
     setup_root_logging()
     cli.add_command(list_nics)
+    cli.add_command(hypervisor)
 
     cli()
 

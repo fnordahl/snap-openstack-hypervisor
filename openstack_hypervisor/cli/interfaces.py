@@ -22,9 +22,12 @@ import pydantic
 import pyroute2
 from pyroute2.ndb.objects.interface import Interface
 
-VALUE_FORMAT = "value"
-JSON_FORMAT = "json"
-JSON_INDENT_FORMAT = "json-indent"
+from openstack_hypervisor.cli.common import (
+    JSON_FORMAT,
+    JSON_INDENT_FORMAT,
+    VALUE_FORMAT,
+    click_option_format,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -159,13 +162,7 @@ def display_nics(nics: NicList, candidate_nics: list[str], format: str):
 
 
 @click.command("list-nics")
-@click.option(
-    "-f",
-    "--format",
-    default=JSON_FORMAT,
-    type=click.Choice([VALUE_FORMAT, JSON_FORMAT, JSON_INDENT_FORMAT]),
-    help="Output format",
-)
+@click_option_format
 def list_nics(format: str):
     """List nics that are candidates for use by OVN/OVS subsystem.
 

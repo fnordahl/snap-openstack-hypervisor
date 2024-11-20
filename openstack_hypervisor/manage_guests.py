@@ -26,6 +26,18 @@ def openstack_guest(guest_xml: str) -> bool:
     return bool([e.findall("nova:instance", ns) for e in metadata])
 
 
+def guest_uuid(guest_xml: str) -> str:
+    """Extract guest UUID from XML."""
+    root = xml.etree.ElementTree.fromstring(guest_xml)
+    return root.find("uuid").text
+
+
+def all_guests() -> list:
+    """List all guests."""
+    conn = libvirt.open("qemu:///system")
+    return conn.listAllDomains()
+
+
 def running_guests(guests) -> list:
     """Extract list of running domains from provided list."""
     running = [dom for dom in guests if dom.isActive()]
@@ -34,8 +46,7 @@ def running_guests(guests) -> list:
 
 def delete_openstack_guests() -> None:
     """Delete any guests managed by openstack."""
-    conn = libvirt.open("qemu:///system")
-    openstack_guests = [dom for dom in conn.listAllDomains() if openstack_guest(dom.XMLDesc())]
+    openstack_guests = [dom for dom in all_guests() if openstack_guest(dom.XMLDesc())]
     for dom in running_guests(openstack_guests):
         try:
             dom.destroy()
