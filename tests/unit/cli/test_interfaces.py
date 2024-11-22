@@ -75,4 +75,4 @@ def mock_interfaces():
 )
 def test_filter_candidate_nics(mock_load_virtual_interfaces, mock_interfaces):
     result = filter_candidate_nics(mock_interfaces)
-    assert result == ["eth2", "vlan0", "bond1"]
+    assert result == ["eth0", "eth2", "vlan0", "bond0", "bond1"]
