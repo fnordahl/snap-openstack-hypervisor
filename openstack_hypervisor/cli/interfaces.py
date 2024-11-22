@@ -115,9 +115,8 @@ def filter_candidate_nics(nics: Iterable[Interface]) -> list[str]:
 
         is_configured = is_interface_configured(nic)
         logger.debug("Interface %r is configured: %r", ifname, is_configured)
-        if not is_configured:
-            logger.debug("Adding interface %r as a candidate", ifname)
-            configured_nics.append(ifname)
+        logger.debug("Adding interface %r as a candidate", ifname)
+        configured_nics.append(ifname)
 
     return configured_nics
 
@@ -143,8 +142,7 @@ def display_nics(nics: NicList, candidate_nics: list[str], format: str):
         print("All nics:")
         for nic in nics.root:
             print(
-                nic.name,
-                ",",
+                nic.name + ",",
                 "configured:",
                 nic.configured,
                 "up:",
