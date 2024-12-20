@@ -6,12 +6,12 @@ nova_metadata_host = {{ node.ip_address }}
 metadata_proxy_shared_secret = {{ credentials.ovn_metadata_proxy_shared_secret }}
 
 [ovs]
-ovsdb_connection = unix:{{ snap_common }}/run/openvswitch/db.sock
+ovsdb_connection = unix:{{ snap_data }}/microovn/chassis/switch/db.sock
 
 [ovn]
 {% if network.ovn_sb_connection %}
-ovn_sb_connection = {{ network.ovn_sb_connection }}
-ovn_sb_private_key = {{ snap_common }}/etc/ssl/private/ovn-key.pem
-ovn_sb_certificate = {{ snap_common }}/etc/ssl/certs/ovn-cert.pem
-ovn_sb_ca_cert = {{ snap_common }}/etc/ssl/certs/ovn-cacert.pem
+ovn_sb_connection = ssl:10.5.0.4:6642,ssl:10.5.0.8:6642,ssl:10.5.0.9:6642
+ovn_sb_private_key = {{ snap_data }}/microovn/certificates/pki/ovnsb-privkey.pem
+ovn_sb_certificate = {{ snap_data }}/microovn/certificates/pki/ovnsb-cert.pem
+ovn_sb_ca_cert = {{ snap_data }}/microovn/certificates/pki/cacert.pem
 {% endif %}

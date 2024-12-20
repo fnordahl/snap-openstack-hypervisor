@@ -893,7 +893,7 @@ def _parse_tls(snap: Snap, config_key: str) -> bytes | None:
 
 def _configure_tls(snap: Snap) -> None:
     """Configure TLS."""
-    _configure_ovn_tls(snap)
+    # _configure_ovn_tls(snap)
     _configure_libvirt_tls(snap)
     _configure_cabundle_tls(snap)
 
@@ -1504,8 +1504,8 @@ def configure(snap: Snap) -> None:
                 raise
         _configure_tls(snap)
 
-    _configure_ovn_base(snap)
-    _configure_ovn_external_networking(snap)
+    #_configure_ovn_base(snap)
+    #_configure_ovn_external_networking(snap)
     _configure_kvm(snap)
     _configure_monitoring_services(snap)
     _configure_ceph(snap)

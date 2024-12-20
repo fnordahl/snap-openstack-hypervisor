@@ -14,20 +14,6 @@ environment:
   PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$SNAP/usr/local/bin:$SNAP/usr/local/sbin:$PATH
   # Standard library components must have priority in module name resolution: https://storyboard.openstack.org/#!/story/2007806
   PYTHONPATH: $PYTHONPATH:$SNAP/usr/lib/python3.10:$SNAP/usr/lib/python3.10/site-packages:$SNAP/usr/lib/python3/dist-packages:$SNAP/lib/python3.10:$SNAP/lib/python3.10/site-packages
-  # OVN runtime configuration
-  OVN_LOGDIR: $SNAP_COMMON/log/ovn
-  OVN_RUNDIR: $SNAP_COMMON/run/ovn
-  OVN_SYSCONFDIR: $SNAP_COMMON/etc
-  OVN_PKGDATADIR: $SNAP/usr/share/ovn
-  OVN_BINDIR: $SNAP/usr/bin
-  OVN_SBINDIR: $SNAP/usr/sbin
-  # OVS runtime configuration
-  OVS_LOGDIR: $SNAP_COMMON/log/openvswitch
-  OVS_RUNDIR: $SNAP_COMMON/run/openvswitch
-  OVS_SYSCONFDIR: $SNAP_COMMON/etc
-  OVS_PKGDATADIR: $SNAP/usr/share/openvswitch
-  OVS_BINDIR: $SNAP/usr/bin
-  OVS_SBINDIR: $SNAP/usr/sbin
 
 architectures:
   - build-on: amd64
@@ -67,6 +53,17 @@ package-repositories:
     suites: [jammy-updates/caracal]
     key-id: 391A9AA2147192839E9DB0315EDB1B62EC4926EA
     url: http://ubuntu-cloud.archive.canonical.com/ubuntu
+
+plugs:
+  ovn-certificates:
+    interface: content
+    target: "$SNAP_DATA/microovn/certificates"
+  ovn-env:
+    interface: content
+    target: "$SNAP_DATA/microovn/env"
+  ovn-chassis:
+    interface: content
+    target: "$SNAP_DATA/microovn/chassis"
 
 apps:
   openstack-hypervisor:
@@ -124,101 +121,6 @@ apps:
     command: usr/bin/virsh
     plugs:
       - network
-      - microstack-support
-
-  # Openvswitch
-  ovs-vswitchd:
-    command: usr/share/openvswitch/scripts/ovs-ctl --no-ovsdb-server --no-monitor start
-    stop-command: usr/share/openvswitch/scripts/ovs-ctl --no-ovsdb-server stop
-    after: [ovsdb-server]
-    daemon: forking
-    plugs:
-      - network
-      - network-bind
-      - network-control
-      - firewall-control
-      - openvswitch-support
-      - process-control
-      - system-trace
-      - hardware-observe
-      - hugepages-control
-      - microstack-support
-
-  ovsdb-server:
-    command: "bin/ovsdb-server-service"
-    stop-command: usr/share/openvswitch/scripts/ovs-ctl --no-ovs-vswitchd stop
-    daemon: forking
-    plugs:
-      - network
-      - network-bind
-      - network-control
-      - openvswitch-support
-      - process-control
-      - system-trace
-      - microstack-support
-
-  # OVN
-  ovn-controller:
-    command: usr/share/ovn/scripts/ovn-ctl start_controller --no-monitor
-    stop-command: usr/share/ovn/scripts/ovn-ctl stop_controller --no-monitor --restart
-    daemon: forking
-    plugs:
-      - network
-      - network-bind
-      - network-control
-      - openvswitch-support
-      - process-control
-      - system-trace
-      - microstack-support
-    after:
-      - ovsdb-server
-      - ovs-vswitchd
-
-  # OVS/OVN cli tools
-  ovn-appctl:
-    command: usr/bin/ovn-appctl
-    plugs:
-      - network
-      - network-bind
-      - microstack-support
-  ovn-trace:
-    command: usr/bin/ovn-trace
-    plugs:
-      - network
-      - network-bind
-      - microstack-support
-  ovn-detrace:
-    command: usr/bin/ovn-detrace
-    plugs:
-      - network
-      - network-bind
-      - microstack-support
-
-  ovs-vsctl:
-    command: usr/bin/ovs-vsctl
-    plugs:
-      - network
-      - network-control
-      - process-control
-      - microstack-support
-  ovs-appctl:
-    command: usr/bin/ovs-appctl
-    plugs:
-      - network
-      - process-control
-      - microstack-support
-  ovs-ofctl:
-    command: usr/bin/ovs-ofctl
-    plugs:
-      - network
-      - process-control
-      - microstack-support
-  ovs-dpctl:
-    command: usr/bin/ovs-dpctl
-    plugs:
-      - network
-      - network-control
-      - process-control
       - microstack-support
 
   nova-compute:
@@ -607,11 +509,6 @@ parts:
     plugin: nil
     stage-packages:
       - openvswitch-switch
-      - openvswitch-switch-dpdk
-      - ovn-host
-    organize:
-       # Deal with alternatives usage in deb packages.
-       usr/lib/openvswitch-switch-dpdk/ovs-vswitchd-dpdk: usr/sbin/ovs-vswitchd
 
   openstack:
     plugin: nil
